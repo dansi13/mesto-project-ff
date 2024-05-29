@@ -8,26 +8,34 @@
 
 // @todo: Вывести карточки на страницу
 
-function createCard(cardData) {
+function createCard(cardData, deleteCallback) {
     const template = document.getElementById('card-template').content.querySelector('.card');
     const card = template.cloneNode(true);
 
-    card.querySelector('.card__image').setAttribute('src', cardData['link']);
-    card.querySelector('.card__title').innerHTML = cardData['name'];
+    const cardImage = card.querySelector('.card__image');
+    cardImage.src = cardData.link;
+    cardImage.alt = cardData.name;
+    card.querySelector('.card__title').textContent = cardData['name'];
     card.querySelector('.card__delete-button').addEventListener('click', () => {
-        card.remove()
+        deleteCallback(card)
     });
 
     return card;
 }
 
 function renderCards(cardList) {
+    const placesList = document.querySelector('.places__list');
+
     for (let i = 0; i < cardList.length; i = i + 1) {
         const cardData = cardList[i];
-        const card = createCard(cardData);
+        const card = createCard(cardData, deleteCard);
         
-        document.querySelector('.places__list').append(card);
+        placesList.append(card);
     }
+}
+
+function deleteCard(card) {
+    card.remove();
 }
 
 renderCards(initialCards);

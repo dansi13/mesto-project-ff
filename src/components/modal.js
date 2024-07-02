@@ -22,5 +22,3 @@ export function handleOverlayClick(evt) {
         closePopup(evt.target);
     }
 }
-
-import * as index from '../index.js';

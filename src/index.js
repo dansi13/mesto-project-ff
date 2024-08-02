@@ -11,15 +11,14 @@ import './styles/index.css';
 import './components/cards.js';
 import './components/modal.js';
 import './components/card.js';
+import './components/validation.js';
+import './components/api.js';
 
-import { createCard } from './components/card.js';
-import { handleLikeClick } from './components/card.js';
-import { deleteCard } from './components/card.js';
-import {openPopup} from './components/modal.js';
-import {closePopup} from './components/modal.js';
-import {escKeyListener} from './components/modal.js';
+import { getUserInfo, updateUserInfo, getInitialCards, addCard, addLike, removeLike, deleteCard } from './components/api.js';
+import { createCard, handleLikeClick, handleDeleteCard } from './components/card.js';
+import {openPopup, closePopup, escKeyListener, handleOverlayClick} from './components/modal.js';
 import {initialCards} from './components/cards.js';
-import {handleOverlayClick} from './components/modal.js';
+import {hideInputError, enableValidation, clearValidation} from './components/validation.js';
 
 const placesList = document.querySelector('.places__list');
 const editBtn = document.querySelector('.profile__edit-button');
@@ -37,17 +36,24 @@ export const profileJob = document.querySelector('.profile__description');
 export const nameInput = document.querySelector('.popup__input_type_name');
 export const jobInput = document.querySelector('.popup__input_type_description');
 export const template = document.getElementById('card-template').content.querySelector('.card');
+const avatarPopup = document.querySelector('.popup_type_avatar');
+const avatarForm = avatarPopup.querySelector('.popup__form');
+const avatarInput = avatarForm.querySelector('input[name="avatar"]');
+const avatarSaveButton = avatarForm.querySelector('.popup__save-button');
+let userId
 
-function renderCards(cardList) {
-    for (let i = 0; i < cardList.length; i = i + 1) {
-        const cardData = cardList[i];
-        const card = createCard(cardData, deleteCard, handleLikeClick, cardClickHandler);
-        
-        placesList.append(card);
-    }
-}
 
-renderCards(initialCards);
+const settings = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'form__submit_inactive',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__input-error_visible'
+};
+
+enableValidation(settings);
+
 
 function handleProfileFormSubmit(evt) {
     evt.preventDefault();
@@ -55,10 +61,22 @@ function handleProfileFormSubmit(evt) {
     const nameValue = nameInput.value;
     const jobValue = jobInput.value;
 
-    profileName.textContent = nameValue;
-    profileJob.textContent = jobValue;
-
-    closePopup(popupEdit);
+    const saveButton = popupEditForm.querySelector('.profile-form__submit-button');
+    saveButton.textContent = 'Сохранение...';
+  
+    updateUserInfo(nameValue, jobValue)
+      .then((userData) => {
+        profileName.textContent = userData.name;
+        profileJob.textContent = userData.about;
+  
+        saveButton.textContent = 'Сохранить';
+  
+        closePopup(popupEdit);
+      })
+      .catch((err) => {
+        console.error(err);
+        saveButton.textContent = 'Сохранить';
+      });
 }
 
 popupEditForm.addEventListener('submit', handleProfileFormSubmit);
@@ -76,13 +94,26 @@ function handleCardFormSubmit(evt) {
     link: formData.get('link')
     }
 
-    const card = createCard(cardData, deleteCard, handleLikeClick, cardClickHandler);
-    
-    placesList.prepend(card);
+    const saveButton = form.querySelector('.card-form__submit-button');
+    saveButton.textContent = 'Сохранение...';
+  
+    addCard(cardData.name, cardData.link)
+      .then((cardData) => {
+        const cardElement = createCard(cardData, userId);
+        placesList.prepend(cardElement);
+  
+        saveButton.textContent = 'Создать';
+        form.reset();
+        
+        closePopup(popupNewCard);
+        form.reset();
 
-    closePopup(popupNewCard);
-
-    popupNewCard.querySelector('.popup__form').reset();
+        clearValidation(popupNewCardForm, settings);
+      })
+      .catch((err) => {
+        console.error(err);
+        saveButton.textContent = 'Создать';
+      });
 }
 
 popupAllList.forEach((popup) => {
@@ -99,6 +130,12 @@ const openPopupImage = (popup, imgSrc, caption) => {
 function openProfilePopup() {
     nameInput.value = profileName.textContent;
     jobInput.value = profileJob.textContent;
+
+    hideInputError(popupEditForm, nameInput, settings);
+    hideInputError(popupEditForm, jobInput, settings);
+
+    clearValidation(popupEditForm, settings);
+    
     openPopup(popupEdit);
 }
 
@@ -120,3 +157,75 @@ closeBtnList.forEach((close) => {
 popupEdit.addEventListener('click', handleOverlayClick);
 popupNewCard.addEventListener('click', handleOverlayClick);
 popupImage.addEventListener('click', handleOverlayClick);
+
+document.addEventListener('DOMContentLoaded', () => {
+  Promise.all([getUserInfo(), getInitialCards()])
+  .then(([userData, initialCards]) => {
+    userId = userData._id;
+    profileName.textContent = userData.name;
+    profileJob.textContent = userData.about;
+    initialCards.forEach(cardData => {
+      const cardElement = createCard(cardData, userId);
+      document.querySelector('.places__list').append(cardElement);
+    });
+  })
+  .catch(err => {
+    console.error(err);
+  });
+  });
+
+// Открытие попапа для редактирования аватар
+
+// avatarEditIcon.addEventListener('click', () => {
+//   openPopup(avatarPopup);
+// });
+
+avatarForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  avatarSaveButton.textContent = 'Сохранение...';
+  const avatarUrl = avatarInput.value;
+
+  updateAvatar(avatarUrl)
+    .then((userData) => {
+      document.querySelector('.profile__avatar').src = userData.avatar;
+      closePopup(avatarPopup);
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+    .finally(() => {
+      avatarSaveButton.textContent = 'Сохранить';
+    });
+});
+
+const checkUrl = (url) => {
+  const regex = /^(https?:\/\/)?([\w\d-]+\.)+[\w-]+(\/[\w\d-]+)*\/?(\.jpg|\.jpeg|\.png|\.gif)$/i;
+  return regex.test(url);
+}
+
+avatarForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const avatarUrl = avatarInput.value;
+
+  if (!checkUrl(avatarUrl)) {
+    avatarInput.setCustomValidity("Введите правильный URL на изображение.");
+    avatarInput.reportValidity();
+    return;
+  }
+
+  avatarSaveButton.textContent = 'Сохранение...';
+
+  updateAvatar(avatarUrl)
+    .then((userData) => {
+      document.querySelector('.profile__avatar').src = userData.avatar;
+      closePopup(avatarPopup);
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+    .finally(() => {
+      avatarSaveButton.textContent = 'Сохранить';
+    });
+});

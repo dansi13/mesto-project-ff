@@ -22,3 +22,21 @@ export function handleOverlayClick(evt) {
         closePopup(evt.target);
     }
 }
+
+export function openDeletePopup(cardId, cardElement) {
+    const deletePopup = document.querySelector('#delete-popup');
+    const confirmButton = deletePopup.querySelector('.popup__confirm-button');
+  
+    deletePopup.classList.add('popup_opened');
+  
+    confirmButton.addEventListener('click', () => {
+      deleteCard(cardId)
+        .then(() => {
+          cardElement.remove();
+          deletePopup.classList.remove('popup_opened');
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }, { once: true });
+  }

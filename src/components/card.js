@@ -1,6 +1,5 @@
-import { template } from "../index.js";
 import { addLike, removeLike, deleteCard } from "../components/api.js";
-import {openDeletePopup} from "./modal.js"
+import { cardClickHandler } from "../index.js";
 
     export const createCard = (cardData, userId) => {
         const cardTemplate = document.getElementById('card-template').content;
@@ -39,7 +38,16 @@ import {openDeletePopup} from "./modal.js"
               .catch((err) => console.error(err));
           }
         });
+
+        cardImage.addEventListener('click', () => {
+            cardClickHandler(cardData);
+        });
       
+        if (cardData.owner._id !== userId) {
+          deleteButton.remove();
+        } else {
+          deleteButton.classList.add('card__delete-button_is-active');
+        }
         deleteButton.addEventListener('click', () => {
           deleteCard(cardData._id)
             .then(() => {
@@ -74,22 +82,4 @@ import {openDeletePopup} from "./modal.js"
                 console.error(err);
             });
     }
-    }
-
-    export function handleDeleteCard(cardId, cardElement) {
-      fetch(`${config.baseUrl}/cards/${cardId}`, {
-        method: 'DELETE',
-        headers: config.headers
-      })
-      .then(res => {
-        if (res.ok) {
-          cardElement.remove();
-          document.querySelector('.delete-popup').classList.remove('popup_opened');
-        } else {
-          return Promise.reject(`Ошибка: ${res.status}`);
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
     }

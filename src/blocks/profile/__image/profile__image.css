@@ -33,7 +33,7 @@
   width: 100%;
 }
 
-.profile__image:hover.profile__image::after {
+.profile__image:hover::after {
   background-position: 50%;
   height: 100%
 }

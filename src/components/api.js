@@ -45,7 +45,7 @@ export const updateUserInfo = (name, about) => {
 };
 
 // Обновление аватара пользователя
-export const updateAvatar = (avatar) => {
+export const updateAvatar = (avatarUrl) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
       method: 'PATCH',
       headers: config.headers,

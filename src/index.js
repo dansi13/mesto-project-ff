@@ -14,7 +14,7 @@ import './components/card.js';
 import './components/validation.js';
 import './components/api.js';
 
-import { getUserInfo, updateUserInfo, getInitialCards, addCard, addLike, removeLike, deleteCard } from './components/api.js';
+import { getUserInfo, updateUserInfo, getInitialCards, addCard, addLike, removeLike, deleteCard, updateAvatar } from './components/api.js';
 import { createCard, handleLikeClick, handleDeleteCard } from './components/card.js';
 import {openPopup, closePopup, escKeyListener, handleOverlayClick} from './components/modal.js';
 import {initialCards} from './components/cards.js';
@@ -39,7 +39,8 @@ export const template = document.getElementById('card-template').content.querySe
 const avatarPopup = document.querySelector('.popup_type_avatar');
 const avatarForm = avatarPopup.querySelector('.popup__form');
 const avatarInput = avatarForm.querySelector('input[name="avatar"]');
-const avatarSaveButton = avatarForm.querySelector('.popup__save-button');
+const avatarSaveButton = avatarForm.querySelector('.popup__button_avatar');
+const profileImage = document.querySelector('.profile__image');
 let userId
 
 
@@ -142,7 +143,7 @@ function openProfilePopup() {
 editBtn.addEventListener('click', () => openProfilePopup());
 addBtn.addEventListener('click', () => openPopup(popupNewCard));
 
-function cardClickHandler(cardData) {
+export function cardClickHandler(cardData) {
     const imgSrc = cardData.link
     const caption = cardData.name
     openPopupImage(popupImage, imgSrc, caption);
@@ -152,11 +153,13 @@ closeBtnList.forEach((close) => {
     close.addEventListener('click', () => closePopup(popupEdit));
     close.addEventListener('click', () => closePopup(popupNewCard));
     close.addEventListener('click', () => closePopup(popupImage));
+    close.addEventListener('click', () => closePopup(avatarPopup));
 });
 
 popupEdit.addEventListener('click', handleOverlayClick);
 popupNewCard.addEventListener('click', handleOverlayClick);
 popupImage.addEventListener('click', handleOverlayClick);
+avatarPopup.addEventListener('click', handleOverlayClick);
 
 document.addEventListener('DOMContentLoaded', () => {
   Promise.all([getUserInfo(), getInitialCards()])
@@ -164,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     userId = userData._id;
     profileName.textContent = userData.name;
     profileJob.textContent = userData.about;
+    profileImage.src = userData.avatar;
     initialCards.forEach(cardData => {
       const cardElement = createCard(cardData, userId);
       document.querySelector('.places__list').append(cardElement);
@@ -176,31 +180,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Открытие попапа для редактирования аватар
 
-// avatarEditIcon.addEventListener('click', () => {
-//   openPopup(avatarPopup);
-// });
-
-avatarForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-
-  avatarSaveButton.textContent = 'Сохранение...';
-  const avatarUrl = avatarInput.value;
-
-  updateAvatar(avatarUrl)
-    .then((userData) => {
-      document.querySelector('.profile__avatar').src = userData.avatar;
-      closePopup(avatarPopup);
-    })
-    .catch((err) => {
-      console.error(err);
-    })
-    .finally(() => {
-      avatarSaveButton.textContent = 'Сохранить';
-    });
+profileImage.addEventListener('click', () => {
+  openPopup(avatarPopup);
 });
 
 const checkUrl = (url) => {
-  const regex = /^(https?:\/\/)?([\w\d-]+\.)+[\w-]+(\/[\w\d-]+)*\/?(\.jpg|\.jpeg|\.png|\.gif)$/i;
+  const regex = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
   return regex.test(url);
 }
 
@@ -219,7 +204,7 @@ avatarForm.addEventListener('submit', (event) => {
 
   updateAvatar(avatarUrl)
     .then((userData) => {
-      document.querySelector('.profile__avatar').src = userData.avatar;
+      profileImage.src = userData.avatar;
       closePopup(avatarPopup);
     })
     .catch((err) => {

@@ -73,8 +73,6 @@ export function enableValidation(settings) {
     });
 }
 
-// enableValidation();
-
 export function clearValidation(formElement, settings) {
     const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
     const buttonElement = formElement.querySelector(settings.submitButtonSelector);

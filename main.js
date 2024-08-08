@@ -1,14 +1,148 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/components/api.js":
+/*!*******************************!*\
+  !*** ./src/components/api.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   addCard: () => (/* binding */ addCard),
+/* harmony export */   addLike: () => (/* binding */ addLike),
+/* harmony export */   deleteCard: () => (/* binding */ deleteCard),
+/* harmony export */   getInitialCards: () => (/* binding */ getInitialCards),
+/* harmony export */   getUserInfo: () => (/* binding */ getUserInfo),
+/* harmony export */   removeLike: () => (/* binding */ removeLike),
+/* harmony export */   updateAvatar: () => (/* binding */ updateAvatar),
+/* harmony export */   updateUserInfo: () => (/* binding */ updateUserInfo)
+/* harmony export */ });
+var config = {
+  baseUrl: 'https://mesto.nomoreparties.co/v1/wff-cohort-20',
+  headers: {
+    authorization: '8f707c9b-b44e-4e6e-844f-36192e6b90e3',
+    'Content-Type': 'application/json'
+  }
+};
+function checkResponse(res) {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+}
+
+// Получение данных пользователя
+var getUserInfo = function getUserInfo() {
+  return fetch("".concat(config.baseUrl, "/users/me"), {
+    headers: config.headers
+  }).then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+  });
+};
+
+// Обновление данных пользователя
+var updateUserInfo = function updateUserInfo(name, about) {
+  return fetch("".concat(config.baseUrl, "/users/me"), {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      name: name,
+      about: about
+    })
+  }).then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+  });
+};
+
+// Обновление аватара пользователя
+var updateAvatar = function updateAvatar(avatarUrl) {
+  return fetch("".concat(config.baseUrl, "/users/me/avatar"), {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatarUrl
+    })
+  }).then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+  });
+};
+
+// Получение карточек
+var getInitialCards = function getInitialCards() {
+  return fetch("".concat(config.baseUrl, "/cards"), {
+    headers: config.headers
+  }).then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+  });
+};
+
+// Добавление новой карточки
+var addCard = function addCard(name, link) {
+  return fetch("".concat(config.baseUrl, "/cards"), {
+    method: 'POST',
+    headers: config.headers,
+    body: JSON.stringify({
+      name: name,
+      link: link
+    })
+  }).then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+  });
+};
+
+// Удаление карточки
+var addLike = function addLike(cardId) {
+  return fetch("".concat(config.baseUrl, "/cards/likes/").concat(cardId), {
+    method: 'PUT',
+    headers: config.headers
+  }).then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+  });
+};
+var removeLike = function removeLike(cardId) {
+  return fetch("".concat(config.baseUrl, "/cards/likes/").concat(cardId), {
+    method: 'DELETE',
+    headers: config.headers
+  }).then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+  });
+};
+var deleteCard = function deleteCard(cardId) {
+  return fetch("".concat(config.baseUrl, "/cards/").concat(cardId), {
+    method: 'DELETE',
+    headers: config.headers
+  }).then(function (res) {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
+  });
+};
+
+/***/ }),
 
 /***/ "./src/components/card.js":
 /*!********************************!*\
@@ -16,7 +150,84 @@
   \********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   createCard: () => (/* binding */ createCard),\n/* harmony export */   deleteCard: () => (/* binding */ deleteCard),\n/* harmony export */   handleLikeClick: () => (/* binding */ handleLikeClick)\n/* harmony export */ });\n/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../index.js */ \"./src/index.js\");\n\nfunction deleteCard(card) {\n  card.remove();\n}\nfunction handleLikeClick(evt) {\n  evt.target.classList.toggle('card__like-button_is-active');\n}\nvar createCard = function createCard(cardData, onDeleteCard, onLikeCard, onOpenImagePopup) {\n  var card = _index_js__WEBPACK_IMPORTED_MODULE_0__.template.cloneNode(true);\n  var cardImage = card.querySelector('.card__image');\n  var deleteCardButton = card.querySelector('.card__delete-button');\n  var likeButton = card.querySelector('.card__like-button');\n  cardImage.src = cardData.link;\n  cardImage.alt = cardData.name;\n  card.querySelector('.card__title').textContent = cardData['name'];\n  cardImage.addEventListener('click', function () {\n    onOpenImagePopup(cardData);\n  });\n  deleteCardButton.addEventListener('click', function () {\n    return onDeleteCard(card);\n  });\n  likeButton.addEventListener('click', onLikeCard);\n  return card;\n};\n\n//# sourceURL=webpack://yandex_prektikum/./src/components/card.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createCard: () => (/* binding */ createCard),
+/* harmony export */   handleLikeClick: () => (/* binding */ handleLikeClick)
+/* harmony export */ });
+/* harmony import */ var _components_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/api.js */ "./src/components/api.js");
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../index.js */ "./src/index.js");
+
+
+var createCard = function createCard(cardData, userId) {
+  var cardTemplate = document.getElementById('card-template').content;
+  var cardElement = cardTemplate.querySelector('.card').cloneNode(true);
+  var cardImage = cardElement.querySelector('.card__image');
+  var cardTitle = cardElement.querySelector('.card__title');
+  var likeButton = cardElement.querySelector('.card__like-button');
+  var likeCount = cardElement.querySelector('.card__like-counter');
+  var deleteButton = cardElement.querySelector('.card__delete-button');
+  cardTitle.textContent = cardData.name;
+  cardImage.src = cardData.link;
+  cardImage.alt = cardData.name;
+  likeCount.textContent = cardData.likes.length;
+  if (cardData.likes && cardData.likes.some(function (like) {
+    return like._id === userId;
+  })) {
+    likeButton.classList.add('card__like-button_is-active');
+  }
+  likeButton.addEventListener('click', function () {
+    if (likeButton.classList.contains('card__like-button_is-active')) {
+      (0,_components_api_js__WEBPACK_IMPORTED_MODULE_0__.removeLike)(cardData._id).then(function (updatedCard) {
+        likeButton.classList.remove('card__like-button_is-active');
+        likeCount.textContent = updatedCard.likes.length;
+      }).catch(function (err) {
+        return console.error(err);
+      });
+    } else {
+      (0,_components_api_js__WEBPACK_IMPORTED_MODULE_0__.addLike)(cardData._id).then(function (updatedCard) {
+        likeButton.classList.add('card__like-button_is-active');
+        likeCount.textContent = updatedCard.likes.length;
+      }).catch(function (err) {
+        return console.error(err);
+      });
+    }
+  });
+  cardImage.addEventListener('click', function () {
+    (0,_index_js__WEBPACK_IMPORTED_MODULE_1__.cardClickHandler)(cardData);
+  });
+  if (cardData.owner._id !== userId) {
+    deleteButton.remove();
+  } else {
+    deleteButton.classList.add('card__delete-button_is-active');
+  }
+  deleteButton.addEventListener('click', function () {
+    (0,_components_api_js__WEBPACK_IMPORTED_MODULE_0__.deleteCard)(cardData._id).then(function () {
+      cardElement.remove();
+    }).catch(function (err) {
+      return console.error(err);
+    });
+  });
+  return cardElement;
+};
+function handleLikeClick(evt, cardId, likeCount) {
+  var isLiked = evt.target.classList.toggle('card__like-button_is-active');
+  if (isLiked) {
+    (0,_components_api_js__WEBPACK_IMPORTED_MODULE_0__.removeLike)(cardId).then(function (cardData) {
+      evt.target.classList.remove('card__like-button_is-active');
+      likeCount.textContent = cardData.likes.length;
+    }).catch(function (err) {
+      console.error(err);
+    });
+  } else {
+    (0,_components_api_js__WEBPACK_IMPORTED_MODULE_0__.addLike)(cardId).then(function (cardData) {
+      evt.target.classList.add('card__like-button_is-active');
+      likeCount.textContent = cardData.likes.length;
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+}
 
 /***/ }),
 
@@ -26,7 +237,29 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   initialCards: () => (/* binding */ initialCards)\n/* harmony export */ });\nvar initialCards = [{\n  name: \"Архыз\",\n  link: \"https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg\"\n}, {\n  name: \"Челябинская область\",\n  link: \"https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg\"\n}, {\n  name: \"Иваново\",\n  link: \"https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg\"\n}, {\n  name: \"Камчатка\",\n  link: \"https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg\"\n}, {\n  name: \"Холмогорский район\",\n  link: \"https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg\"\n}, {\n  name: \"Байкал\",\n  link: \"https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg\"\n}];\n\n//# sourceURL=webpack://yandex_prektikum/./src/components/cards.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   initialCards: () => (/* binding */ initialCards)
+/* harmony export */ });
+var initialCards = [{
+  name: "Архыз",
+  link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg"
+}, {
+  name: "Челябинская область",
+  link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg"
+}, {
+  name: "Иваново",
+  link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg"
+}, {
+  name: "Камчатка",
+  link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg"
+}, {
+  name: "Холмогорский район",
+  link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg"
+}, {
+  name: "Байкал",
+  link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg"
+}];
 
 /***/ }),
 
@@ -36,7 +269,120 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   closePopup: () => (/* binding */ closePopup),\n/* harmony export */   escKeyListener: () => (/* binding */ escKeyListener),\n/* harmony export */   handleOverlayClick: () => (/* binding */ handleOverlayClick),\n/* harmony export */   openPopup: () => (/* binding */ openPopup)\n/* harmony export */ });\nvar openPopup = function openPopup(popup) {\n  popup.classList.add('popup_is-opened');\n  document.addEventListener('keydown', escKeyListener);\n};\nvar closePopup = function closePopup(popup) {\n  popup.classList.remove('popup_is-opened');\n  document.removeEventListener('keydown', escKeyListener);\n};\nvar escKeyListener = function escKeyListener(event) {\n  if (event.key === \"Escape\") {\n    var openedPopup = document.querySelector('.popup_is-opened');\n    if (openedPopup) {\n      closePopup(openedPopup);\n    }\n  }\n};\nfunction handleOverlayClick(evt) {\n  if (evt.target.classList.contains('popup_is-opened')) {\n    closePopup(evt.target);\n  }\n}\n\n//# sourceURL=webpack://yandex_prektikum/./src/components/modal.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   closePopup: () => (/* binding */ closePopup),
+/* harmony export */   escKeyListener: () => (/* binding */ escKeyListener),
+/* harmony export */   handleOverlayClick: () => (/* binding */ handleOverlayClick),
+/* harmony export */   openPopup: () => (/* binding */ openPopup)
+/* harmony export */ });
+var openPopup = function openPopup(popup) {
+  popup.classList.add('popup_is-opened');
+  document.addEventListener('keydown', escKeyListener);
+};
+var closePopup = function closePopup(popup) {
+  popup.classList.remove('popup_is-opened');
+  document.removeEventListener('keydown', escKeyListener);
+};
+var escKeyListener = function escKeyListener(event) {
+  if (event.key === "Escape") {
+    var openedPopup = document.querySelector('.popup_is-opened');
+    if (openedPopup) {
+      closePopup(openedPopup);
+    }
+  }
+};
+function handleOverlayClick(evt) {
+  if (evt.target.classList.contains('popup_is-opened')) {
+    closePopup(evt.target);
+  }
+}
+
+/***/ }),
+
+/***/ "./src/components/validation.js":
+/*!**************************************!*\
+  !*** ./src/components/validation.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearValidation: () => (/* binding */ clearValidation),
+/* harmony export */   enableValidation: () => (/* binding */ enableValidation),
+/* harmony export */   hideInputError: () => (/* binding */ hideInputError)
+/* harmony export */ });
+function showInputError(formElement, inputElement, errorMessage, settings) {
+  var errorElement = formElement.querySelector(".".concat(inputElement.id, "-error"));
+  inputElement.classList.add(settings.inputErrorClass);
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add(settings.errorClass);
+}
+function hideInputError(formElement, inputElement, settings) {
+  var errorElement = formElement.querySelector(".".concat(inputElement.id, "-error"));
+  inputElement.classList.remove(settings.inputErrorClass);
+  errorElement.classList.remove(settings.errorClass);
+  errorElement.textContent = '';
+}
+function checkInputValidity(formElement, inputElement, settings) {
+  var namePattern = /^[A-Za-zА-Яа-яЁё\s-]+$/;
+  if (inputElement.name === 'placeNameInput' || inputElement.name === 'name') {
+    if (!namePattern.test(inputElement.value)) {
+      inputElement.setCustomValidity("Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы");
+      showInputError(formElement, inputElement, inputElement.validationMessage, settings);
+      return;
+    } else {
+      inputElement.setCustomValidity("");
+    }
+  }
+  if (!inputElement.validity.valid) {
+    showInputError(formElement, inputElement, inputElement.validationMessage, settings);
+  } else {
+    hideInputError(formElement, inputElement, settings);
+  }
+}
+function hasInvalidInput(inputList) {
+  return inputList.some(function (inputElement) {
+    return !inputElement.validity.valid;
+  });
+}
+function toggleButtonState(inputList, buttonElement, settings) {
+  if (hasInvalidInput(inputList)) {
+    buttonElement.classList.add(settings.inactiveButtonClass);
+    buttonElement.disabled = true;
+  } else {
+    buttonElement.classList.remove(settings.inactiveButtonClass);
+    buttonElement.disabled = false;
+  }
+}
+function setEventListeners(formElement, settings) {
+  var inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
+  var buttonElement = formElement.querySelector(settings.submitButtonSelector);
+  toggleButtonState(inputList, buttonElement, settings);
+  inputList.forEach(function (inputElement) {
+    inputElement.addEventListener('input', function () {
+      checkInputValidity(formElement, inputElement, settings);
+      toggleButtonState(inputList, buttonElement, settings);
+    });
+  });
+}
+function enableValidation(settings) {
+  var formList = Array.from(document.querySelectorAll(settings.formSelector));
+  formList.forEach(function (formElement) {
+    formElement.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+    });
+    setEventListeners(formElement, settings);
+  });
+}
+function clearValidation(formElement, settings) {
+  var inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
+  var buttonElement = formElement.querySelector(settings.submitButtonSelector);
+  inputList.forEach(function (inputElement) {
+    hideInputError(formElement, inputElement, settings);
+  });
+  toggleButtonState(inputList, buttonElement, settings);
+}
 
 /***/ }),
 
@@ -46,7 +392,210 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   jobInput: () => (/* binding */ jobInput),\n/* harmony export */   nameInput: () => (/* binding */ nameInput),\n/* harmony export */   profileJob: () => (/* binding */ profileJob),\n/* harmony export */   profileName: () => (/* binding */ profileName),\n/* harmony export */   template: () => (/* binding */ template)\n/* harmony export */ });\n/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles/index.css */ \"./src/styles/index.css\");\n/* harmony import */ var _components_cards_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/cards.js */ \"./src/components/cards.js\");\n/* harmony import */ var _components_modal_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/modal.js */ \"./src/components/modal.js\");\n/* harmony import */ var _components_card_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/card.js */ \"./src/components/card.js\");\n// @todo: Темплейт карточки\n\n// @todo: DOM узлы\n\n// @todo: Функция создания карточки\n\n// @todo: Функция удаления карточки\n\n// @todo: Вывести карточки на страницу\n\n\n\n\n\n\n\n\n\n\n\n\nvar placesList = document.querySelector('.places__list');\nvar editBtn = document.querySelector('.profile__edit-button');\nvar addBtn = document.querySelector('.profile__add-button');\nvar closeBtnList = document.querySelectorAll('.popup__close');\nvar popupEdit = document.querySelector('.popup_type_edit');\nvar popupNewCard = document.querySelector('.popup_type_new-card');\nvar popupEditForm = popupEdit.querySelector('.popup__form');\nvar popupNewCardForm = popupNewCard.querySelector('.popup__form');\nvar popupImage = document.querySelector('.popup_type_image');\nvar cardSaveButton = popupNewCard.querySelector('.popup__button');\nvar popupAllList = document.querySelectorAll('.popup');\nvar profileName = document.querySelector('.profile__title');\nvar profileJob = document.querySelector('.profile__description');\nvar nameInput = document.querySelector('.popup__input_type_name');\nvar jobInput = document.querySelector('.popup__input_type_description');\nvar template = document.getElementById('card-template').content.querySelector('.card');\nfunction renderCards(cardList) {\n  for (var i = 0; i < cardList.length; i = i + 1) {\n    var cardData = cardList[i];\n    var card = (0,_components_card_js__WEBPACK_IMPORTED_MODULE_3__.createCard)(cardData, _components_card_js__WEBPACK_IMPORTED_MODULE_3__.deleteCard, _components_card_js__WEBPACK_IMPORTED_MODULE_3__.handleLikeClick, cardClickHandler);\n    placesList.append(card);\n  }\n}\nrenderCards(_components_cards_js__WEBPACK_IMPORTED_MODULE_1__.initialCards);\nfunction handleProfileFormSubmit(evt) {\n  evt.preventDefault();\n  var nameValue = nameInput.value;\n  var jobValue = jobInput.value;\n  profileName.textContent = nameValue;\n  profileJob.textContent = jobValue;\n  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupEdit);\n}\npopupEditForm.addEventListener('submit', handleProfileFormSubmit);\npopupNewCardForm.addEventListener('submit', handleCardFormSubmit);\nfunction handleCardFormSubmit(evt) {\n  evt.preventDefault();\n  var form = evt.target.closest('form');\n  var formData = new FormData(form);\n  var cardData = {\n    name: formData.get('place-name'),\n    link: formData.get('link')\n  };\n  var card = (0,_components_card_js__WEBPACK_IMPORTED_MODULE_3__.createCard)(cardData, _components_card_js__WEBPACK_IMPORTED_MODULE_3__.deleteCard, _components_card_js__WEBPACK_IMPORTED_MODULE_3__.handleLikeClick, cardClickHandler);\n  placesList.prepend(card);\n  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupNewCard);\n  popupNewCard.querySelector('.popup__form').reset();\n}\npopupAllList.forEach(function (popup) {\n  popup.classList.add('popup_is-animated');\n});\nvar openPopupImage = function openPopupImage(popup, imgSrc, caption) {\n  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popup);\n  popupImage.querySelector('.popup__image').src = imgSrc;\n  popupImage.querySelector('.popup__image').alt = caption;\n  popupImage.querySelector('.popup__caption').textContent = caption;\n};\nfunction openProfilePopup() {\n  nameInput.value = profileName.textContent;\n  jobInput.value = profileJob.textContent;\n  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popupEdit);\n}\neditBtn.addEventListener('click', openProfilePopup());\naddBtn.addEventListener('click', function () {\n  return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popupNewCard);\n});\nfunction cardClickHandler(cardData) {\n  var imgSrc = cardData.link;\n  var caption = cardData.name;\n  openPopupImage(popupImage, imgSrc, caption);\n}\ncloseBtnList.forEach(function (close) {\n  close.addEventListener('click', function () {\n    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupEdit);\n  });\n  close.addEventListener('click', function () {\n    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupNewCard);\n  });\n  close.addEventListener('click', function () {\n    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupImage);\n  });\n});\npopupEdit.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);\npopupNewCard.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);\npopupImage.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);\n\n//# sourceURL=webpack://yandex_prektikum/./src/index.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   cardClickHandler: () => (/* binding */ cardClickHandler),
+/* harmony export */   jobInput: () => (/* binding */ jobInput),
+/* harmony export */   nameInput: () => (/* binding */ nameInput),
+/* harmony export */   profileJob: () => (/* binding */ profileJob),
+/* harmony export */   profileName: () => (/* binding */ profileName),
+/* harmony export */   template: () => (/* binding */ template)
+/* harmony export */ });
+/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles/index.css */ "./src/styles/index.css");
+/* harmony import */ var _components_cards_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/cards.js */ "./src/components/cards.js");
+/* harmony import */ var _components_modal_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/modal.js */ "./src/components/modal.js");
+/* harmony import */ var _components_card_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/card.js */ "./src/components/card.js");
+/* harmony import */ var _components_validation_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/validation.js */ "./src/components/validation.js");
+/* harmony import */ var _components_api_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/api.js */ "./src/components/api.js");
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+// @todo: Темплейт карточки
+
+// @todo: DOM узлы
+
+// @todo: Функция создания карточки
+
+// @todo: Функция удаления карточки
+
+// @todo: Вывести карточки на страницу
+
+
+
+
+
+
+
+
+
+
+
+var placesList = document.querySelector('.places__list');
+var editBtn = document.querySelector('.profile__edit-button');
+var addBtn = document.querySelector('.profile__add-button');
+var closeBtnList = document.querySelectorAll('.popup__close');
+var popupEdit = document.querySelector('.popup_type_edit');
+var popupNewCard = document.querySelector('.popup_type_new-card');
+var popupEditForm = popupEdit.querySelector('.popup__form');
+var popupNewCardForm = popupNewCard.querySelector('.popup__form');
+var popupImage = document.querySelector('.popup_type_image');
+var cardSaveButton = popupNewCard.querySelector('.popup__button');
+var popupAllList = document.querySelectorAll('.popup');
+var profileName = document.querySelector('.profile__title');
+var profileJob = document.querySelector('.profile__description');
+var nameInput = document.querySelector('.popup__input_type_name');
+var jobInput = document.querySelector('.popup__input_type_description');
+var template = document.getElementById('card-template').content.querySelector('.card');
+var avatarPopup = document.querySelector('.popup_type_avatar');
+var avatarForm = avatarPopup.querySelector('.popup__form');
+var avatarInput = avatarForm.querySelector('input[name="avatar"]');
+var avatarSaveButton = avatarForm.querySelector('.popup__button_avatar');
+var profileImage = document.querySelector('.profile__image');
+var userId;
+var settings = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'form__submit_inactive',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__input-error_visible'
+};
+(0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.enableValidation)(settings);
+function handleProfileFormSubmit(evt) {
+  evt.preventDefault();
+  var nameValue = nameInput.value;
+  var jobValue = jobInput.value;
+  var saveButton = popupEditForm.querySelector('.profile-form__submit-button');
+  saveButton.textContent = 'Сохранение...';
+  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.updateUserInfo)(nameValue, jobValue).then(function (userData) {
+    profileName.textContent = userData.name;
+    profileJob.textContent = userData.about;
+    saveButton.textContent = 'Сохранить';
+    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupEdit);
+  }).catch(function (err) {
+    console.error(err);
+    saveButton.textContent = 'Сохранить';
+  });
+}
+popupEditForm.addEventListener('submit', handleProfileFormSubmit);
+popupNewCardForm.addEventListener('submit', handleCardFormSubmit);
+function handleCardFormSubmit(evt) {
+  evt.preventDefault();
+  var form = evt.target.closest('form');
+  var formData = new FormData(form);
+  var cardData = {
+    name: formData.get('place-name'),
+    link: formData.get('link')
+  };
+  var saveButton = form.querySelector('.card-form__submit-button');
+  saveButton.textContent = 'Сохранение...';
+  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.addCard)(cardData.name, cardData.link).then(function (cardData) {
+    var cardElement = (0,_components_card_js__WEBPACK_IMPORTED_MODULE_3__.createCard)(cardData, userId);
+    placesList.prepend(cardElement);
+    saveButton.textContent = 'Создать';
+    form.reset();
+    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupNewCard);
+    form.reset();
+    (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.clearValidation)(popupNewCardForm, settings);
+  }).catch(function (err) {
+    console.error(err);
+    saveButton.textContent = 'Создать';
+  });
+}
+popupAllList.forEach(function (popup) {
+  popup.classList.add('popup_is-animated');
+});
+var openPopupImage = function openPopupImage(popup, imgSrc, caption) {
+  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popup);
+  popupImage.querySelector('.popup__image').src = imgSrc;
+  popupImage.querySelector('.popup__image').alt = caption;
+  popupImage.querySelector('.popup__caption').textContent = caption;
+};
+function openProfilePopup() {
+  nameInput.value = profileName.textContent;
+  jobInput.value = profileJob.textContent;
+  (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.hideInputError)(popupEditForm, nameInput, settings);
+  (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.hideInputError)(popupEditForm, jobInput, settings);
+  (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.clearValidation)(popupEditForm, settings);
+  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popupEdit);
+}
+editBtn.addEventListener('click', function () {
+  return openProfilePopup();
+});
+addBtn.addEventListener('click', function () {
+  return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popupNewCard);
+});
+function cardClickHandler(cardData) {
+  var imgSrc = cardData.link;
+  var caption = cardData.name;
+  openPopupImage(popupImage, imgSrc, caption);
+}
+closeBtnList.forEach(function (close) {
+  close.addEventListener('click', function () {
+    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupEdit);
+  });
+  close.addEventListener('click', function () {
+    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupNewCard);
+  });
+  close.addEventListener('click', function () {
+    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupImage);
+  });
+  close.addEventListener('click', function () {
+    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(avatarPopup);
+  });
+});
+popupEdit.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
+popupNewCard.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
+popupImage.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
+avatarPopup.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
+document.addEventListener('DOMContentLoaded', function () {
+  Promise.all([(0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.getUserInfo)(), (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.getInitialCards)()]).then(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+      userData = _ref2[0],
+      initialCards = _ref2[1];
+    userId = userData._id;
+    profileName.textContent = userData.name;
+    profileJob.textContent = userData.about;
+    profileImage.style.backgroundImage = "url(".concat(userData.avatar, ")");
+    initialCards.forEach(function (cardData) {
+      var cardElement = (0,_components_card_js__WEBPACK_IMPORTED_MODULE_3__.createCard)(cardData, userId);
+      document.querySelector('.places__list').append(cardElement);
+    });
+  }).catch(function (err) {
+    console.error(err);
+  });
+});
+
+// Открытие попапа для редактирования аватар
+
+profileImage.addEventListener('click', function () {
+  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(avatarPopup);
+});
+var checkUrl = function checkUrl(url) {
+  var regex = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+  return regex.test(url);
+};
+avatarForm.addEventListener('submit', function (event) {
+  event.preventDefault();
+  var avatarUrl = avatarInput.value;
+  if (!checkUrl(avatarUrl)) {
+    avatarInput.setCustomValidity("Введите правильный URL на изображение.");
+    avatarInput.reportValidity();
+    return;
+  }
+  avatarSaveButton.textContent = 'Сохранение...';
+  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.updateAvatar)(avatarUrl).then(function (userData) {
+    profileImage.style.backgroundImage = "url(".concat(userData.avatar, ")");
+    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(avatarPopup);
+  }).catch(function (err) {
+    console.error(err);
+  }).finally(function () {
+    avatarSaveButton.textContent = 'Сохранить';
+  });
+});
 
 /***/ }),
 
@@ -56,7 +605,9 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n\n//# sourceURL=webpack://yandex_prektikum/./src/styles/index.css?");
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ })
 
@@ -124,3 +675,4 @@ eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extr
 /******/ 	
 /******/ })()
 ;
+//# sourceMappingURL=main.js.map

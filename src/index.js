@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     userId = userData._id;
     profileName.textContent = userData.name;
     profileJob.textContent = userData.about;
-    profileImage.src = userData.avatar;
+    profileImage.style.backgroundImage = `url(${userData.avatar})`;
     initialCards.forEach(cardData => {
       const cardElement = createCard(cardData, userId);
       document.querySelector('.places__list').append(cardElement);
@@ -204,7 +204,7 @@ avatarForm.addEventListener('submit', (event) => {
 
   updateAvatar(avatarUrl)
     .then((userData) => {
-      profileImage.src = userData.avatar;
+      profileImage.style.backgroundImage = `url(${userData.avatar})`;
       closePopup(avatarPopup);
     })
     .catch((err) => {

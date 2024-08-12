@@ -31,16 +31,20 @@ const popupNewCardForm = popupNewCard.querySelector('.popup__form');
 const popupImage = document.querySelector('.popup_type_image');
 const cardSaveButton = popupNewCard.querySelector('.popup__button');
 const popupAllList = document.querySelectorAll('.popup');
-export const profileName = document.querySelector('.profile__title');
-export const profileJob = document.querySelector('.profile__description');
-export const nameInput = document.querySelector('.popup__input_type_name');
-export const jobInput = document.querySelector('.popup__input_type_description');
-export const template = document.getElementById('card-template').content.querySelector('.card');
+const profileName = document.querySelector('.profile__title');
+const profileJob = document.querySelector('.profile__description');
+const nameInput = document.querySelector('.popup__input_type_name');
+const jobInput = document.querySelector('.popup__input_type_description');
+const template = document.getElementById('card-template').content.querySelector('.card');
 const avatarPopup = document.querySelector('.popup_type_avatar');
 const avatarForm = avatarPopup.querySelector('.popup__form');
 const avatarInput = avatarForm.querySelector('input[name="avatar"]');
 const avatarSaveButton = avatarForm.querySelector('.popup__button_avatar');
 const profileImage = document.querySelector('.profile__image');
+const saveButton = popupEditForm.querySelector('.profile-form__submit-button');
+const Image = popupImage.querySelector('.popup__image');
+const ImageCaption =  popupImage.querySelector('.popup__caption');
+const closeButtons = document.querySelectorAll('.popup__close');
 let userId
 
 
@@ -62,7 +66,6 @@ function handleProfileFormSubmit(evt) {
     const nameValue = nameInput.value;
     const jobValue = jobInput.value;
 
-    const saveButton = popupEditForm.querySelector('.profile-form__submit-button');
     saveButton.textContent = 'Сохранение...';
   
     updateUserInfo(nameValue, jobValue)
@@ -70,12 +73,12 @@ function handleProfileFormSubmit(evt) {
         profileName.textContent = userData.name;
         profileJob.textContent = userData.about;
   
-        saveButton.textContent = 'Сохранить';
-  
         closePopup(popupEdit);
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
         saveButton.textContent = 'Сохранить';
       });
 }
@@ -95,19 +98,20 @@ function handleCardFormSubmit(evt) {
     link: formData.get('link')
     }
 
-    const saveButton = form.querySelector('.card-form__submit-button');
     saveButton.textContent = 'Сохранение...';
   
     addCard(cardData.name, cardData.link)
       .then((cardData) => {
-        const cardElement = createCard(cardData, userId);
+        const cardElement = createCard(cardData, userId, {
+          deleteCard: deleteCard,
+          addLike: addLike,
+          handleImageClick: openPopupImage});
         placesList.prepend(cardElement);
   
         saveButton.textContent = 'Создать';
         form.reset();
         
         closePopup(popupNewCard);
-        form.reset();
 
         clearValidation(popupNewCardForm, settings);
       })
@@ -123,17 +127,14 @@ popupAllList.forEach((popup) => {
 
 const openPopupImage = (popup, imgSrc, caption) => {
     openPopup(popup);
-    popupImage.querySelector('.popup__image').src = imgSrc;
-    popupImage.querySelector('.popup__image').alt = caption;
-    popupImage.querySelector('.popup__caption').textContent = caption;
+    Image.src = imgSrc;
+    Image.alt = caption;
+    ImageCaption.textContent = caption;
 }
 
 function openProfilePopup() {
     nameInput.value = profileName.textContent;
     jobInput.value = profileJob.textContent;
-
-    hideInputError(popupEditForm, nameInput, settings);
-    hideInputError(popupEditForm, jobInput, settings);
 
     clearValidation(popupEditForm, settings);
     
@@ -143,17 +144,9 @@ function openProfilePopup() {
 editBtn.addEventListener('click', () => openProfilePopup());
 addBtn.addEventListener('click', () => openPopup(popupNewCard));
 
-export function cardClickHandler(cardData) {
-    const imgSrc = cardData.link
-    const caption = cardData.name
-    openPopupImage(popupImage, imgSrc, caption);
-}
-
-closeBtnList.forEach((close) => {
-    close.addEventListener('click', () => closePopup(popupEdit));
-    close.addEventListener('click', () => closePopup(popupNewCard));
-    close.addEventListener('click', () => closePopup(popupImage));
-    close.addEventListener('click', () => closePopup(avatarPopup));
+closeButtons.forEach((button) => {
+  const popup = button.closest('.popup');
+  button.addEventListener('click', () => closePopup(popup));
 });
 
 popupEdit.addEventListener('click', handleOverlayClick);
@@ -169,8 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
     profileJob.textContent = userData.about;
     profileImage.style.backgroundImage = `url(${userData.avatar})`;
     initialCards.forEach(cardData => {
-      const cardElement = createCard(cardData, userId);
-      document.querySelector('.places__list').append(cardElement);
+      const cardElement = createCard(cardData, userId, {
+        deleteCard: deleteCard,
+        addLike: addLike,
+        handleImageClick: openPopupImage});
+      placesList.append(cardElement);
     });
   })
   .catch(err => {
@@ -184,21 +180,10 @@ profileImage.addEventListener('click', () => {
   openPopup(avatarPopup);
 });
 
-const checkUrl = (url) => {
-  const regex = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
-  return regex.test(url);
-}
-
 avatarForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
   const avatarUrl = avatarInput.value;
-
-  if (!checkUrl(avatarUrl)) {
-    avatarInput.setCustomValidity("Введите правильный URL на изображение.");
-    avatarInput.reportValidity();
-    return;
-  }
 
   avatarSaveButton.textContent = 'Сохранение...';
 

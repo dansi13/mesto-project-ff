@@ -13,16 +13,13 @@ export function hideInputError(formElement, inputElement, settings) {
 }
 
 function checkInputValidity(formElement, inputElement, settings) {
-    const namePattern = /^[A-Za-zА-Яа-яЁё\s-]+$/;
+    const errorMessage = inputElement.dataset.errorMessage;
+    const pattern = inputElement.getAttribute('pattern');
     
-    if (inputElement.name === 'placeNameInput' || inputElement.name === 'name') {
-        if (!namePattern.test(inputElement.value)) {
-            inputElement.setCustomValidity("Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы");
-            showInputError(formElement, inputElement, inputElement.validationMessage, settings);
-            return;
-        } else {
-            inputElement.setCustomValidity("");
-        }
+    if (pattern && !new RegExp(pattern).test(inputElement.value)) {
+        inputElement.setCustomValidity(errorMessage || "Неверный формат ввода");
+    } else {
+        inputElement.setCustomValidity("");
     }
 
     if (!inputElement.validity.valid) {

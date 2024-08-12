@@ -1,7 +1,6 @@
 import { addLike, removeLike, deleteCard } from "../components/api.js";
-import { cardClickHandler } from "../index.js";
 
-    export const createCard = (cardData, userId) => {
+    export const createCard = (cardData, userId, {deleteCard, addLike, handleImageClick}) => {
         const cardTemplate = document.getElementById('card-template').content;
         const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
       
@@ -10,6 +9,9 @@ import { cardClickHandler } from "../index.js";
         const likeButton = cardElement.querySelector('.card__like-button');
         const likeCount = cardElement.querySelector('.card__like-counter');
         const deleteButton = cardElement.querySelector('.card__delete-button');
+        const popupImage = document.querySelector('.popup_type_image');
+        const imgSrc = cardData.link
+        const caption = cardData.name
       
         cardTitle.textContent = cardData.name;
         cardImage.src = cardData.link;
@@ -40,7 +42,7 @@ import { cardClickHandler } from "../index.js";
         });
 
         cardImage.addEventListener('click', () => {
-            cardClickHandler(cardData);
+            handleImageClick(popupImage, imgSrc, caption);
         });
       
         if (cardData.owner._id !== userId) {

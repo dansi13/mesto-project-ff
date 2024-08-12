@@ -37,12 +37,7 @@ function checkResponse(res) {
 var getUserInfo = function getUserInfo() {
   return fetch("".concat(config.baseUrl, "/users/me"), {
     headers: config.headers
-  }).then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
-  });
+  }).then(checkResponse);
 };
 
 // Обновление данных пользователя
@@ -54,12 +49,7 @@ var updateUserInfo = function updateUserInfo(name, about) {
       name: name,
       about: about
     })
-  }).then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
-  });
+  }).then(checkResponse);
 };
 
 // Обновление аватара пользователя
@@ -70,24 +60,14 @@ var updateAvatar = function updateAvatar(avatarUrl) {
     body: JSON.stringify({
       avatar: avatarUrl
     })
-  }).then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
-  });
+  }).then(checkResponse);
 };
 
 // Получение карточек
 var getInitialCards = function getInitialCards() {
   return fetch("".concat(config.baseUrl, "/cards"), {
     headers: config.headers
-  }).then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
-  });
+  }).then(checkResponse);
 };
 
 // Добавление новой карточки
@@ -99,12 +79,7 @@ var addCard = function addCard(name, link) {
       name: name,
       link: link
     })
-  }).then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
-  });
+  }).then(checkResponse);
 };
 
 // Удаление карточки
@@ -112,34 +87,19 @@ var addLike = function addLike(cardId) {
   return fetch("".concat(config.baseUrl, "/cards/likes/").concat(cardId), {
     method: 'PUT',
     headers: config.headers
-  }).then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
-  });
+  }).then(checkResponse);
 };
 var removeLike = function removeLike(cardId) {
   return fetch("".concat(config.baseUrl, "/cards/likes/").concat(cardId), {
     method: 'DELETE',
     headers: config.headers
-  }).then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
-  });
+  }).then(checkResponse);
 };
 var deleteCard = function deleteCard(cardId) {
   return fetch("".concat(config.baseUrl, "/cards/").concat(cardId), {
     method: 'DELETE',
     headers: config.headers
-  }).then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(res.status));
-  });
+  }).then(checkResponse);
 };
 
 /***/ }),
@@ -156,10 +116,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   handleLikeClick: () => (/* binding */ handleLikeClick)
 /* harmony export */ });
 /* harmony import */ var _components_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/api.js */ "./src/components/api.js");
-/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../index.js */ "./src/index.js");
 
-
-var createCard = function createCard(cardData, userId) {
+var createCard = function createCard(cardData, userId, _ref) {
+  var deleteCard = _ref.deleteCard,
+    addLike = _ref.addLike,
+    handleImageClick = _ref.handleImageClick;
   var cardTemplate = document.getElementById('card-template').content;
   var cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   var cardImage = cardElement.querySelector('.card__image');
@@ -167,6 +128,9 @@ var createCard = function createCard(cardData, userId) {
   var likeButton = cardElement.querySelector('.card__like-button');
   var likeCount = cardElement.querySelector('.card__like-counter');
   var deleteButton = cardElement.querySelector('.card__delete-button');
+  var popupImage = document.querySelector('.popup_type_image');
+  var imgSrc = cardData.link;
+  var caption = cardData.name;
   cardTitle.textContent = cardData.name;
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
@@ -185,7 +149,7 @@ var createCard = function createCard(cardData, userId) {
         return console.error(err);
       });
     } else {
-      (0,_components_api_js__WEBPACK_IMPORTED_MODULE_0__.addLike)(cardData._id).then(function (updatedCard) {
+      addLike(cardData._id).then(function (updatedCard) {
         likeButton.classList.add('card__like-button_is-active');
         likeCount.textContent = updatedCard.likes.length;
       }).catch(function (err) {
@@ -194,7 +158,7 @@ var createCard = function createCard(cardData, userId) {
     }
   });
   cardImage.addEventListener('click', function () {
-    (0,_index_js__WEBPACK_IMPORTED_MODULE_1__.cardClickHandler)(cardData);
+    handleImageClick(popupImage, imgSrc, caption);
   });
   if (cardData.owner._id !== userId) {
     deleteButton.remove();
@@ -202,7 +166,7 @@ var createCard = function createCard(cardData, userId) {
     deleteButton.classList.add('card__delete-button_is-active');
   }
   deleteButton.addEventListener('click', function () {
-    (0,_components_api_js__WEBPACK_IMPORTED_MODULE_0__.deleteCard)(cardData._id).then(function () {
+    deleteCard(cardData._id).then(function () {
       cardElement.remove();
     }).catch(function (err) {
       return console.error(err);
@@ -277,23 +241,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   openPopup: () => (/* binding */ openPopup)
 /* harmony export */ });
 var openPopup = function openPopup(popup) {
-  popup.classList.add('popup_is-opened');
-  document.addEventListener('keydown', escKeyListener);
+  popup.classList.add("popup_is-opened");
+  document.addEventListener("keydown", escKeyListener);
 };
 var closePopup = function closePopup(popup) {
-  popup.classList.remove('popup_is-opened');
-  document.removeEventListener('keydown', escKeyListener);
+  popup.classList.remove("popup_is-opened");
+  document.removeEventListener("keydown", escKeyListener);
 };
 var escKeyListener = function escKeyListener(event) {
   if (event.key === "Escape") {
-    var openedPopup = document.querySelector('.popup_is-opened');
+    var openedPopup = document.querySelector(".popup_is-opened");
     if (openedPopup) {
       closePopup(openedPopup);
     }
   }
 };
 function handleOverlayClick(evt) {
-  if (evt.target.classList.contains('popup_is-opened')) {
+  if (evt.target.classList.contains("popup_is-opened")) {
     closePopup(evt.target);
   }
 }
@@ -325,15 +289,12 @@ function hideInputError(formElement, inputElement, settings) {
   errorElement.textContent = '';
 }
 function checkInputValidity(formElement, inputElement, settings) {
-  var namePattern = /^[A-Za-zА-Яа-яЁё\s-]+$/;
-  if (inputElement.name === 'placeNameInput' || inputElement.name === 'name') {
-    if (!namePattern.test(inputElement.value)) {
-      inputElement.setCustomValidity("Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы");
-      showInputError(formElement, inputElement, inputElement.validationMessage, settings);
-      return;
-    } else {
-      inputElement.setCustomValidity("");
-    }
+  var errorMessage = inputElement.dataset.errorMessage;
+  var pattern = inputElement.getAttribute('pattern');
+  if (pattern && !new RegExp(pattern).test(inputElement.value)) {
+    inputElement.setCustomValidity(errorMessage || "Неверный формат ввода");
+  } else {
+    inputElement.setCustomValidity("");
   }
   if (!inputElement.validity.valid) {
     showInputError(formElement, inputElement, inputElement.validationMessage, settings);
@@ -383,219 +344,6 @@ function clearValidation(formElement, settings) {
   });
   toggleButtonState(inputList, buttonElement, settings);
 }
-
-/***/ }),
-
-/***/ "./src/index.js":
-/*!**********************!*\
-  !*** ./src/index.js ***!
-  \**********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   cardClickHandler: () => (/* binding */ cardClickHandler),
-/* harmony export */   jobInput: () => (/* binding */ jobInput),
-/* harmony export */   nameInput: () => (/* binding */ nameInput),
-/* harmony export */   profileJob: () => (/* binding */ profileJob),
-/* harmony export */   profileName: () => (/* binding */ profileName),
-/* harmony export */   template: () => (/* binding */ template)
-/* harmony export */ });
-/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles/index.css */ "./src/styles/index.css");
-/* harmony import */ var _components_cards_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/cards.js */ "./src/components/cards.js");
-/* harmony import */ var _components_modal_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/modal.js */ "./src/components/modal.js");
-/* harmony import */ var _components_card_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/card.js */ "./src/components/card.js");
-/* harmony import */ var _components_validation_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/validation.js */ "./src/components/validation.js");
-/* harmony import */ var _components_api_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/api.js */ "./src/components/api.js");
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-// @todo: Темплейт карточки
-
-// @todo: DOM узлы
-
-// @todo: Функция создания карточки
-
-// @todo: Функция удаления карточки
-
-// @todo: Вывести карточки на страницу
-
-
-
-
-
-
-
-
-
-
-
-var placesList = document.querySelector('.places__list');
-var editBtn = document.querySelector('.profile__edit-button');
-var addBtn = document.querySelector('.profile__add-button');
-var closeBtnList = document.querySelectorAll('.popup__close');
-var popupEdit = document.querySelector('.popup_type_edit');
-var popupNewCard = document.querySelector('.popup_type_new-card');
-var popupEditForm = popupEdit.querySelector('.popup__form');
-var popupNewCardForm = popupNewCard.querySelector('.popup__form');
-var popupImage = document.querySelector('.popup_type_image');
-var cardSaveButton = popupNewCard.querySelector('.popup__button');
-var popupAllList = document.querySelectorAll('.popup');
-var profileName = document.querySelector('.profile__title');
-var profileJob = document.querySelector('.profile__description');
-var nameInput = document.querySelector('.popup__input_type_name');
-var jobInput = document.querySelector('.popup__input_type_description');
-var template = document.getElementById('card-template').content.querySelector('.card');
-var avatarPopup = document.querySelector('.popup_type_avatar');
-var avatarForm = avatarPopup.querySelector('.popup__form');
-var avatarInput = avatarForm.querySelector('input[name="avatar"]');
-var avatarSaveButton = avatarForm.querySelector('.popup__button_avatar');
-var profileImage = document.querySelector('.profile__image');
-var userId;
-var settings = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'form__submit_inactive',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__input-error_visible'
-};
-(0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.enableValidation)(settings);
-function handleProfileFormSubmit(evt) {
-  evt.preventDefault();
-  var nameValue = nameInput.value;
-  var jobValue = jobInput.value;
-  var saveButton = popupEditForm.querySelector('.profile-form__submit-button');
-  saveButton.textContent = 'Сохранение...';
-  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.updateUserInfo)(nameValue, jobValue).then(function (userData) {
-    profileName.textContent = userData.name;
-    profileJob.textContent = userData.about;
-    saveButton.textContent = 'Сохранить';
-    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupEdit);
-  }).catch(function (err) {
-    console.error(err);
-    saveButton.textContent = 'Сохранить';
-  });
-}
-popupEditForm.addEventListener('submit', handleProfileFormSubmit);
-popupNewCardForm.addEventListener('submit', handleCardFormSubmit);
-function handleCardFormSubmit(evt) {
-  evt.preventDefault();
-  var form = evt.target.closest('form');
-  var formData = new FormData(form);
-  var cardData = {
-    name: formData.get('place-name'),
-    link: formData.get('link')
-  };
-  var saveButton = form.querySelector('.card-form__submit-button');
-  saveButton.textContent = 'Сохранение...';
-  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.addCard)(cardData.name, cardData.link).then(function (cardData) {
-    var cardElement = (0,_components_card_js__WEBPACK_IMPORTED_MODULE_3__.createCard)(cardData, userId);
-    placesList.prepend(cardElement);
-    saveButton.textContent = 'Создать';
-    form.reset();
-    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupNewCard);
-    form.reset();
-    (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.clearValidation)(popupNewCardForm, settings);
-  }).catch(function (err) {
-    console.error(err);
-    saveButton.textContent = 'Создать';
-  });
-}
-popupAllList.forEach(function (popup) {
-  popup.classList.add('popup_is-animated');
-});
-var openPopupImage = function openPopupImage(popup, imgSrc, caption) {
-  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popup);
-  popupImage.querySelector('.popup__image').src = imgSrc;
-  popupImage.querySelector('.popup__image').alt = caption;
-  popupImage.querySelector('.popup__caption').textContent = caption;
-};
-function openProfilePopup() {
-  nameInput.value = profileName.textContent;
-  jobInput.value = profileJob.textContent;
-  (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.hideInputError)(popupEditForm, nameInput, settings);
-  (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.hideInputError)(popupEditForm, jobInput, settings);
-  (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.clearValidation)(popupEditForm, settings);
-  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popupEdit);
-}
-editBtn.addEventListener('click', function () {
-  return openProfilePopup();
-});
-addBtn.addEventListener('click', function () {
-  return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popupNewCard);
-});
-function cardClickHandler(cardData) {
-  var imgSrc = cardData.link;
-  var caption = cardData.name;
-  openPopupImage(popupImage, imgSrc, caption);
-}
-closeBtnList.forEach(function (close) {
-  close.addEventListener('click', function () {
-    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupEdit);
-  });
-  close.addEventListener('click', function () {
-    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupNewCard);
-  });
-  close.addEventListener('click', function () {
-    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupImage);
-  });
-  close.addEventListener('click', function () {
-    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(avatarPopup);
-  });
-});
-popupEdit.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
-popupNewCard.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
-popupImage.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
-avatarPopup.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
-document.addEventListener('DOMContentLoaded', function () {
-  Promise.all([(0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.getUserInfo)(), (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.getInitialCards)()]).then(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-      userData = _ref2[0],
-      initialCards = _ref2[1];
-    userId = userData._id;
-    profileName.textContent = userData.name;
-    profileJob.textContent = userData.about;
-    profileImage.style.backgroundImage = "url(".concat(userData.avatar, ")");
-    initialCards.forEach(function (cardData) {
-      var cardElement = (0,_components_card_js__WEBPACK_IMPORTED_MODULE_3__.createCard)(cardData, userId);
-      document.querySelector('.places__list').append(cardElement);
-    });
-  }).catch(function (err) {
-    console.error(err);
-  });
-});
-
-// Открытие попапа для редактирования аватар
-
-profileImage.addEventListener('click', function () {
-  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(avatarPopup);
-});
-var checkUrl = function checkUrl(url) {
-  var regex = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
-  return regex.test(url);
-};
-avatarForm.addEventListener('submit', function (event) {
-  event.preventDefault();
-  var avatarUrl = avatarInput.value;
-  if (!checkUrl(avatarUrl)) {
-    avatarInput.setCustomValidity("Введите правильный URL на изображение.");
-    avatarInput.reportValidity();
-    return;
-  }
-  avatarSaveButton.textContent = 'Сохранение...';
-  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.updateAvatar)(avatarUrl).then(function (userData) {
-    profileImage.style.backgroundImage = "url(".concat(userData.avatar, ")");
-    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(avatarPopup);
-  }).catch(function (err) {
-    console.error(err);
-  }).finally(function () {
-    avatarSaveButton.textContent = 'Сохранить';
-  });
-});
 
 /***/ }),
 
@@ -667,12 +415,191 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/index.js");
-/******/ 	
+var __webpack_exports__ = {};
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles/index.css */ "./src/styles/index.css");
+/* harmony import */ var _components_cards_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/cards.js */ "./src/components/cards.js");
+/* harmony import */ var _components_modal_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/modal.js */ "./src/components/modal.js");
+/* harmony import */ var _components_card_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/card.js */ "./src/components/card.js");
+/* harmony import */ var _components_validation_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/validation.js */ "./src/components/validation.js");
+/* harmony import */ var _components_api_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/api.js */ "./src/components/api.js");
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+// @todo: Темплейт карточки
+
+// @todo: DOM узлы
+
+// @todo: Функция создания карточки
+
+// @todo: Функция удаления карточки
+
+// @todo: Вывести карточки на страницу
+
+
+
+
+
+
+
+
+
+
+
+var placesList = document.querySelector('.places__list');
+var editBtn = document.querySelector('.profile__edit-button');
+var addBtn = document.querySelector('.profile__add-button');
+var closeBtnList = document.querySelectorAll('.popup__close');
+var popupEdit = document.querySelector('.popup_type_edit');
+var popupNewCard = document.querySelector('.popup_type_new-card');
+var popupEditForm = popupEdit.querySelector('.popup__form');
+var popupNewCardForm = popupNewCard.querySelector('.popup__form');
+var popupImage = document.querySelector('.popup_type_image');
+var cardSaveButton = popupNewCard.querySelector('.popup__button');
+var popupAllList = document.querySelectorAll('.popup');
+var profileName = document.querySelector('.profile__title');
+var profileJob = document.querySelector('.profile__description');
+var nameInput = document.querySelector('.popup__input_type_name');
+var jobInput = document.querySelector('.popup__input_type_description');
+var template = document.getElementById('card-template').content.querySelector('.card');
+var avatarPopup = document.querySelector('.popup_type_avatar');
+var avatarForm = avatarPopup.querySelector('.popup__form');
+var avatarInput = avatarForm.querySelector('input[name="avatar"]');
+var avatarSaveButton = avatarForm.querySelector('.popup__button_avatar');
+var profileImage = document.querySelector('.profile__image');
+var saveButton = popupEditForm.querySelector('.profile-form__submit-button');
+var Image = popupImage.querySelector('.popup__image');
+var ImageCaption = popupImage.querySelector('.popup__caption');
+var closeButtons = document.querySelectorAll('.popup__close');
+var userId;
+var settings = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'form__submit_inactive',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__input-error_visible'
+};
+(0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.enableValidation)(settings);
+function handleProfileFormSubmit(evt) {
+  evt.preventDefault();
+  var nameValue = nameInput.value;
+  var jobValue = jobInput.value;
+  saveButton.textContent = 'Сохранение...';
+  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.updateUserInfo)(nameValue, jobValue).then(function (userData) {
+    profileName.textContent = userData.name;
+    profileJob.textContent = userData.about;
+    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupEdit);
+  }).catch(function (err) {
+    console.error(err);
+  }).finally(function () {
+    saveButton.textContent = 'Сохранить';
+  });
+}
+popupEditForm.addEventListener('submit', handleProfileFormSubmit);
+popupNewCardForm.addEventListener('submit', handleCardFormSubmit);
+function handleCardFormSubmit(evt) {
+  evt.preventDefault();
+  var form = evt.target.closest('form');
+  var formData = new FormData(form);
+  var cardData = {
+    name: formData.get('place-name'),
+    link: formData.get('link')
+  };
+  saveButton.textContent = 'Сохранение...';
+  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.addCard)(cardData.name, cardData.link).then(function (cardData) {
+    var cardElement = (0,_components_card_js__WEBPACK_IMPORTED_MODULE_3__.createCard)(cardData, userId, {
+      deleteCard: _components_api_js__WEBPACK_IMPORTED_MODULE_5__.deleteCard,
+      addLike: _components_api_js__WEBPACK_IMPORTED_MODULE_5__.addLike,
+      handleImageClick: openPopupImage
+    });
+    placesList.prepend(cardElement);
+    saveButton.textContent = 'Создать';
+    form.reset();
+    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popupNewCard);
+    (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.clearValidation)(popupNewCardForm, settings);
+  }).catch(function (err) {
+    console.error(err);
+    saveButton.textContent = 'Создать';
+  });
+}
+popupAllList.forEach(function (popup) {
+  popup.classList.add('popup_is-animated');
+});
+var openPopupImage = function openPopupImage(popup, imgSrc, caption) {
+  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popup);
+  Image.src = imgSrc;
+  Image.alt = caption;
+  ImageCaption.textContent = caption;
+};
+function openProfilePopup() {
+  nameInput.value = profileName.textContent;
+  jobInput.value = profileJob.textContent;
+  (0,_components_validation_js__WEBPACK_IMPORTED_MODULE_4__.clearValidation)(popupEditForm, settings);
+  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popupEdit);
+}
+editBtn.addEventListener('click', function () {
+  return openProfilePopup();
+});
+addBtn.addEventListener('click', function () {
+  return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(popupNewCard);
+});
+closeButtons.forEach(function (button) {
+  var popup = button.closest('.popup');
+  button.addEventListener('click', function () {
+    return (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(popup);
+  });
+});
+popupEdit.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
+popupNewCard.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
+popupImage.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
+avatarPopup.addEventListener('click', _components_modal_js__WEBPACK_IMPORTED_MODULE_2__.handleOverlayClick);
+document.addEventListener('DOMContentLoaded', function () {
+  Promise.all([(0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.getUserInfo)(), (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.getInitialCards)()]).then(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+      userData = _ref2[0],
+      initialCards = _ref2[1];
+    userId = userData._id;
+    profileName.textContent = userData.name;
+    profileJob.textContent = userData.about;
+    profileImage.style.backgroundImage = "url(".concat(userData.avatar, ")");
+    initialCards.forEach(function (cardData) {
+      var cardElement = (0,_components_card_js__WEBPACK_IMPORTED_MODULE_3__.createCard)(cardData, userId, {
+        deleteCard: _components_api_js__WEBPACK_IMPORTED_MODULE_5__.deleteCard,
+        addLike: _components_api_js__WEBPACK_IMPORTED_MODULE_5__.addLike,
+        handleImageClick: openPopupImage
+      });
+      placesList.append(cardElement);
+    });
+  }).catch(function (err) {
+    console.error(err);
+  });
+});
+
+// Открытие попапа для редактирования аватар
+
+profileImage.addEventListener('click', function () {
+  (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.openPopup)(avatarPopup);
+});
+avatarForm.addEventListener('submit', function (event) {
+  event.preventDefault();
+  var avatarUrl = avatarInput.value;
+  avatarSaveButton.textContent = 'Сохранение...';
+  (0,_components_api_js__WEBPACK_IMPORTED_MODULE_5__.updateAvatar)(avatarUrl).then(function (userData) {
+    profileImage.style.backgroundImage = "url(".concat(userData.avatar, ")");
+    (0,_components_modal_js__WEBPACK_IMPORTED_MODULE_2__.closePopup)(avatarPopup);
+  }).catch(function (err) {
+    console.error(err);
+  }).finally(function () {
+    avatarSaveButton.textContent = 'Сохранить';
+  });
+});
 /******/ })()
 ;
 //# sourceMappingURL=main.js.map

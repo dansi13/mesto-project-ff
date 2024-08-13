@@ -1,4 +1,6 @@
 import { addLike, removeLike, deleteCard } from "../components/api.js";
+import { openPopupImage } from "../index.js";
+import { openPopup } from "./modal.js";
 
     export const createCard = (cardData, userId, {deleteCard, addLike, handleImageClick}) => {
         const cardTemplate = document.getElementById('card-template').content;
@@ -9,7 +11,6 @@ import { addLike, removeLike, deleteCard } from "../components/api.js";
         const likeButton = cardElement.querySelector('.card__like-button');
         const likeCount = cardElement.querySelector('.card__like-counter');
         const deleteButton = cardElement.querySelector('.card__delete-button');
-        const popupImage = document.querySelector('.popup_type_image');
         const imgSrc = cardData.link
         const caption = cardData.name
       
@@ -42,7 +43,7 @@ import { addLike, removeLike, deleteCard } from "../components/api.js";
         });
 
         cardImage.addEventListener('click', () => {
-            handleImageClick(popupImage, imgSrc, caption);
+            handleImageClick(imgSrc, caption);
         });
       
         if (cardData.owner._id !== userId) {
@@ -60,28 +61,3 @@ import { addLike, removeLike, deleteCard } from "../components/api.js";
       
         return cardElement;
       };
-
-
-    export function handleLikeClick(evt, cardId, likeCount) {
-        const isLiked = evt.target.classList.toggle('card__like-button_is-active');
-    
-        if (isLiked) {
-        removeLike(cardId)
-            .then((cardData) => {
-                evt.target.classList.remove('card__like-button_is-active');
-                likeCount.textContent = cardData.likes.length;
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    } else {
-        addLike(cardId)
-            .then((cardData) => {
-                evt.target.classList.add('card__like-button_is-active');
-                likeCount.textContent = cardData.likes.length;
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }
-    }

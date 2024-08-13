@@ -15,10 +15,9 @@ import './components/validation.js';
 import './components/api.js';
 
 import { getUserInfo, updateUserInfo, getInitialCards, addCard, addLike, removeLike, deleteCard, updateAvatar } from './components/api.js';
-import { createCard, handleLikeClick, handleDeleteCard } from './components/card.js';
+import { createCard } from './components/card.js';
 import {openPopup, closePopup, escKeyListener, handleOverlayClick} from './components/modal.js';
-import {initialCards} from './components/cards.js';
-import {hideInputError, enableValidation, clearValidation} from './components/validation.js';
+import {enableValidation, clearValidation} from './components/validation.js';
 
 const placesList = document.querySelector('.places__list');
 const editBtn = document.querySelector('.profile__edit-button');
@@ -29,7 +28,7 @@ const popupNewCard = document.querySelector('.popup_type_new-card');
 const popupEditForm = popupEdit.querySelector('.popup__form');
 const popupNewCardForm = popupNewCard.querySelector('.popup__form');
 const popupImage = document.querySelector('.popup_type_image');
-const cardSaveButton = popupNewCard.querySelector('.popup__button');
+const cardSaveButton = popupNewCard.querySelector('.card-form__submit-button');
 const popupAllList = document.querySelectorAll('.popup');
 const profileName = document.querySelector('.profile__title');
 const profileJob = document.querySelector('.profile__description');
@@ -41,9 +40,9 @@ const avatarForm = avatarPopup.querySelector('.popup__form');
 const avatarInput = avatarForm.querySelector('input[name="avatar"]');
 const avatarSaveButton = avatarForm.querySelector('.popup__button_avatar');
 const profileImage = document.querySelector('.profile__image');
-const saveButton = popupEditForm.querySelector('.profile-form__submit-button');
-const Image = popupImage.querySelector('.popup__image');
-const ImageCaption =  popupImage.querySelector('.popup__caption');
+const profileSaveButton = popupEditForm.querySelector('.profile-form__submit-button');
+const image = popupImage.querySelector('.popup__image');
+const imageCaption =  popupImage.querySelector('.popup__caption');
 const closeButtons = document.querySelectorAll('.popup__close');
 let userId
 
@@ -66,7 +65,7 @@ function handleProfileFormSubmit(evt) {
     const nameValue = nameInput.value;
     const jobValue = jobInput.value;
 
-    saveButton.textContent = 'Сохранение...';
+    profileSaveButton.textContent = 'Сохранение...';
   
     updateUserInfo(nameValue, jobValue)
       .then((userData) => {
@@ -79,7 +78,7 @@ function handleProfileFormSubmit(evt) {
         console.error(err);
       })
       .finally(() => {
-        saveButton.textContent = 'Сохранить';
+        profileSaveButton.textContent = 'Сохранить';
       });
 }
 
@@ -98,7 +97,7 @@ function handleCardFormSubmit(evt) {
     link: formData.get('link')
     }
 
-    saveButton.textContent = 'Сохранение...';
+    cardSaveButton.textContent = 'Сохранение...';
   
     addCard(cardData.name, cardData.link)
       .then((cardData) => {
@@ -108,7 +107,6 @@ function handleCardFormSubmit(evt) {
           handleImageClick: openPopupImage});
         placesList.prepend(cardElement);
   
-        saveButton.textContent = 'Создать';
         form.reset();
         
         closePopup(popupNewCard);
@@ -117,7 +115,9 @@ function handleCardFormSubmit(evt) {
       })
       .catch((err) => {
         console.error(err);
-        saveButton.textContent = 'Создать';
+      })
+      .finally(() => {
+        cardSaveButton.textContent = 'Создать';
       });
 }
 
@@ -125,11 +125,11 @@ popupAllList.forEach((popup) => {
     popup.classList.add('popup_is-animated');
 })
 
-const openPopupImage = (popup, imgSrc, caption) => {
-    openPopup(popup);
-    Image.src = imgSrc;
-    Image.alt = caption;
-    ImageCaption.textContent = caption;
+const openPopupImage = (imgSrc, caption) => {
+    openPopup(popupImage);
+    image.src = imgSrc;
+    image.alt = caption;
+    imageCaption.textContent = caption;
 }
 
 function openProfilePopup() {
